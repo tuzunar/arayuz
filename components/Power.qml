@@ -23,7 +23,7 @@ Button {
         id: powerMenu
 
         visible: false
-        implicitHeight: 100
+        implicitHeight: 130
         implicitWidth: 100
         grabFocus: true
 
@@ -42,6 +42,15 @@ Button {
                 anchors.fill: parent
                 anchors.margins: 12
 
+                Button {
+                    text: "Logout"
+
+                    onClicked: {
+                        Quickshell.execDetached([
+                            "hyprshutdown",
+                        ])
+                    }
+                }
                 Button {
                     text: "Shutdown"
 
