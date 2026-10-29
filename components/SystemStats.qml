@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Io
+import Quickshell.Widgets
 
 RowLayout {
     id: root
@@ -9,6 +10,7 @@ RowLayout {
     property real cpuPercentage: 0
     property double previousCpuTotal: 0
     property double previousCpuIdle: 0
+    property real gpuUsagePercent: 0
 
     Layout.rightMargin: 3
     Layout.leftMargin: 3
@@ -57,6 +59,26 @@ RowLayout {
         memoryPercent = total > 0 ? used / total * 100 : 0
     }
 
+    Process {
+        running: true
+
+        command:[
+            "nvidia-smi",
+            "--query-gpu=utilization.gpu,memory.used,memory.total,temperature.gpu",
+            "--format=csv,noheader,nounits",
+            "--loop=2"
+        ] 
+
+        stdout: SplitParser {
+            onRead: line => {
+                const values = line.trim().split(",")
+                let gpuUsage = Number(values[0].trim()) 
+
+                root.gpuUsagePercent = gpuUsage
+            }
+        }
+    }
+
     FileView {
         id: cpuFile
 
@@ -84,11 +106,30 @@ RowLayout {
         }
     }
 
+    IconImage {
+        source: Qt.resolvedUrl("../icons/cpu.svg")
+        implicitHeight: 20
+        implicitWidth: 20
+    }
     Text {
         text: `${root.cpuPercentage.toFixed(0)}%`
     }
 
+    IconImage {
+        source: Qt.resolvedUrl("../icons/ram.svg")
+        implicitHeight: 24
+        implicitWidth: 24
+    }
     Text {
         text: `${root.memoryPercent.toFixed(0)}%`
+    }
+
+    IconImage {
+        source: Qt.resolvedUrl("../icons/gpu.svg")
+        implicitHeight: 24
+        implicitWidth: 24
+    }
+    Text {
+        text: `${root.gpuUsagePercent.toFixed(0)}%`
     }
 }
