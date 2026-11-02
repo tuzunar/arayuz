@@ -65,21 +65,6 @@ RowLayout {
         }
     }
 
-    Slider {
-        implicitWidth: 200
-        value: root.hasAudio ? root.audioSink.audio.volume : 0
-
-        onMoved: {
-            if (root.hasAudio)
-                root.audioSink.audio.volume = value
-        }
-    }
-
-    Text {
-        text: root.hasAudio
-            ? Math.round(root.audioSink.audio.volume * 100)
-            : "--"
-    }
 
     PopupWindow {
         id: audioPopup
@@ -112,6 +97,25 @@ RowLayout {
                     text: root.listDevices 
                         ? "Show Applications"
                         : "Show Devices"
+                }
+                RowLayout {
+                    Layout.fillWidth: true
+                    Slider {
+                        implicitWidth: 300
+                        value: root.hasAudio ? root.audioSink.audio.volume : 0
+
+                        onMoved: {
+                            if (root.hasAudio)
+                                root.audioSink.audio.volume = value
+                        }
+                    }
+
+                    Text {
+                        color: "white"
+                        text: root.hasAudio
+                            ? Math.round(root.audioSink.audio.volume * 100)
+                            : "--"
+                    }
                 }
                 ListView {
                     visible: !root.listDevices
